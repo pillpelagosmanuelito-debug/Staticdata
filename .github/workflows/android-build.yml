@@ -1,0 +1,70 @@
+name: Android CI - Staticdata
+
+# Se activa al hacer push o abrir un Pull Request contra main.
+# Genera el wrapper de Gradle (el binario gradle-wrapper.jar no se pudo
+# descargar en el entorno de construcción original, sin acceso a red),
+# ejecuta pruebas unitarias, lint y ensambla el APK de depuración.
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Instalar Gradle 8.7
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Regenerar gradle-wrapper.jar
+        run: gradle wrapper --gradle-version 8.7
+
+      - name: Dar permisos de ejecución a gradlew
+        run: chmod +x ./gradlew
+
+      - name: Limpiar proyecto
+        run: ./gradlew clean
+
+      - name: Ejecutar pruebas unitarias
+        run: ./gradlew testDebugUnitTest
+
+      - name: Ejecutar lint
+        run: ./gradlew lintDebug
+
+      - name: Ensamblar APK de depuración
+        run: ./gradlew assembleDebug
+
+      - name: Publicar reporte de pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: app/build/reports/tests/testDebugUnitTest/
+
+      - name: Publicar reporte de lint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: app/build/reports/lint-results-debug.html
+
+      - name: Publicar APK generado
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Staticdata-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk

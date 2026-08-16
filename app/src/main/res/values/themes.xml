@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base del sistema para la Activity; el theming real de la UI
+         (colores, tipografías) lo aplica StaticdataTheme en Jetpack Compose. -->
+    <style name="Theme.Staticdata" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
