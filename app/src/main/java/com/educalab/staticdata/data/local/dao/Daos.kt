@@ -81,7 +81,7 @@ interface CaseFileDao {
     suspend fun insertAll(cases: List<CaseFileEntity>)
 
     @Update
-    suspend fun update(case: CaseFileEntity)
+    suspend fun update(caseFile: CaseFileEntity)
 
     @Query("SELECT * FROM case_file ORDER BY orderIndex")
     fun observeAll(): Flow<List<CaseFileEntity>>
