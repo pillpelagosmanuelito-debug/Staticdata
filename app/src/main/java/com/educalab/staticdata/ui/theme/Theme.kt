@@ -6,6 +6,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
+private val Color_White = androidx.compose.ui.graphics.Color(0xFFFFFFFF)
+
 private val StaticdataLightScheme = lightColorScheme(
     primary = AmberStampDark,
     onPrimary = Color_White,
@@ -41,8 +43,6 @@ private val StaticdataDarkScheme = darkColorScheme(
     error = CoralAlert,
     onError = InkNavy900,
 )
-
-private val Color_White = androidx.compose.ui.graphics.Color(0xFFFFFFFF)
 
 /**
  * Staticdata usa siempre el esquema "claro" tipo pergamino/oficina de casos
