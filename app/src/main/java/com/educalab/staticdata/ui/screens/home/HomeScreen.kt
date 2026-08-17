@@ -5,7 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VolumeUp
@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.ui.components.XpProgressBar
@@ -30,6 +31,14 @@ import com.educalab.staticdata.ui.illustration.MascotMood
 import com.educalab.staticdata.ui.illustration.ModuleIcon
 import com.educalab.staticdata.ui.illustration.ModuleIconArt
 import com.educalab.staticdata.ui.navigation.Routes
+import com.educalab.staticdata.ui.theme.AmberStamp
+import com.educalab.staticdata.ui.theme.CoralAlert
+import com.educalab.staticdata.ui.theme.LimeZest
+import com.educalab.staticdata.ui.theme.PinkPop
+import com.educalab.staticdata.ui.theme.SkyBlue
+import com.educalab.staticdata.ui.theme.SunYellow
+import com.educalab.staticdata.ui.theme.TealClue
+import com.educalab.staticdata.ui.theme.VioletMystery
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 
@@ -93,8 +102,8 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                items(NODES) { node ->
-                    HomeNodeCard(node = node, onClick = { onNavigate(node.route) })
+                itemsIndexed(NODES) { index, node ->
+                    HomeNodeCard(node = node, accent = CARD_ACCENTS[index % CARD_ACCENTS.size], onClick = { onNavigate(node.route) })
                 }
             }
             Spacer(Modifier.height(12.dp))
@@ -130,29 +139,31 @@ private fun NextMissionCard(state: HomeUiState, onOpen: () -> Unit) {
     }
 }
 
+private val CARD_ACCENTS = listOf(CoralAlert, SkyBlue, PinkPop, LimeZest, AmberStamp, VioletMystery, TealClue, SunYellow)
+
 @Composable
-private fun HomeNodeCard(node: HomeNode, onClick: () -> Unit) {
+private fun HomeNodeCard(node: HomeNode, accent: Color, onClick: () -> Unit) {
     Card(
         onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(22.dp),
+        colors = CardDefaults.cardColors(containerColor = accent.copy(alpha = 0.16f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.height(150.dp)
+        modifier = Modifier.heightIn(min = 158.dp)
     ) {
-        Column(modifier = Modifier.padding(14.dp).fillMaxSize()) {
+        Column(modifier = Modifier.padding(14.dp).fillMaxWidth()) {
             Box(
                 modifier = Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(accent.copy(alpha = 0.32f)),
                 contentAlignment = Alignment.Center
             ) {
-                ModuleIconArt(icon = node.icon, tint = MaterialTheme.colorScheme.onSecondaryContainer)
+                ModuleIconArt(icon = node.icon, tint = accent)
             }
             Spacer(Modifier.height(8.dp))
             Text(node.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 2)
             Spacer(Modifier.height(2.dp))
-            Text(node.teaser, style = MaterialTheme.typography.bodyMedium, maxLines = 2, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(node.teaser, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

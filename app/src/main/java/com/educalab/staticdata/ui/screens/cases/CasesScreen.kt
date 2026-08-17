@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.domain.model.CaseFile
@@ -24,8 +25,25 @@ import com.educalab.staticdata.ui.components.AgencyTopBar
 import com.educalab.staticdata.ui.components.StatusChip
 import com.educalab.staticdata.ui.illustration.ModuleIcon
 import com.educalab.staticdata.ui.illustration.ModuleIconArt
+import com.educalab.staticdata.ui.theme.AmberStamp
+import com.educalab.staticdata.ui.theme.CoralAlert
+import com.educalab.staticdata.ui.theme.LimeZest
+import com.educalab.staticdata.ui.theme.PinkPop
+import com.educalab.staticdata.ui.theme.SkyBlue
+import com.educalab.staticdata.ui.theme.TealClue
+import com.educalab.staticdata.ui.theme.VioletMystery
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
+
+private val CATEGORY_ACCENTS = mapOf(
+    "Frutas" to CoralAlert,
+    "Mascotas" to SkyBlue,
+    "Deportes" to LimeZest,
+    "Libros" to VioletMystery,
+    "Transportes" to AmberStamp,
+    "Mediciones" to TealClue
+)
+private fun categoryAccent(category: String): Color = CATEGORY_ACCENTS[category] ?: PinkPop
 
 @Composable
 fun CasesScreen(onBack: () -> Unit, onOpenCase: (Long) -> Unit) {
@@ -54,18 +72,19 @@ fun CasesScreen(onBack: () -> Unit, onOpenCase: (Long) -> Unit) {
 @Composable
 private fun CaseCard(case: CaseFile, onClick: () -> Unit) {
     val locked = case.status == CaseStatus.BLOQUEADO
+    val accent = categoryAccent(case.category)
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = accent.copy(alpha = 0.14f)),
         modifier = Modifier.fillMaxWidth().alpha(if (locked) 0.55f else 1f)
     ) {
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                modifier = Modifier.size(48.dp).clip(RoundedCornerShape(14.dp)).background(MaterialTheme.colorScheme.secondaryContainer),
+                modifier = Modifier.size(48.dp).clip(RoundedCornerShape(14.dp)).background(accent.copy(alpha = 0.32f)),
                 contentAlignment = Alignment.Center
             ) {
-                ModuleIconArt(icon = ModuleIcon.CASE_STAMP, tint = MaterialTheme.colorScheme.onSecondaryContainer)
+                ModuleIconArt(icon = ModuleIcon.CASE_STAMP, tint = accent)
             }
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {

@@ -1,10 +1,13 @@
 package com.educalab.staticdata.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 
 private val Color_White = androidx.compose.ui.graphics.Color(0xFFFFFFFF)
 
@@ -44,6 +47,17 @@ private val StaticdataDarkScheme = darkColorScheme(
     onError = InkNavy900,
 )
 
+// Esquinas bien redondeadas en todos los componentes por defecto (botones,
+// campos, tarjetas sin shape propio): refuerza la sensación de app-juego
+// amigable en vez de app de oficina.
+private val StaticdataShapes = Shapes(
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(12.dp),
+    medium = RoundedCornerShape(18.dp),
+    large = RoundedCornerShape(24.dp),
+    extraLarge = RoundedCornerShape(32.dp)
+)
+
 /**
  * Staticdata usa siempre el esquema "claro" tipo pergamino/oficina de casos
  * como identidad principal (más cálido y legible para la temática de
@@ -52,5 +66,5 @@ private val StaticdataDarkScheme = darkColorScheme(
 @Composable
 fun StaticdataTheme(useDarkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colorScheme = if (useDarkTheme) StaticdataDarkScheme else StaticdataLightScheme
-    MaterialTheme(colorScheme = colorScheme, typography = StaticdataTypography, content = content)
+    MaterialTheme(colorScheme = colorScheme, typography = StaticdataTypography, shapes = StaticdataShapes, content = content)
 }
