@@ -19,7 +19,10 @@ data class CaseDetailUiState(
     val currentIndex: Int = 0,
     val lastResult: SubmitAnswerResult? = null,
     val finished: Boolean = false,
-    val loading: Boolean = true
+    val loading: Boolean = true,
+    /** Datos crudos del expediente del caso: la evidencia que el niño puede contar/leer para resolver los retos. */
+    val evidenceLabel: String = "",
+    val evidenceValues: List<String> = emptyList()
 )
 
 class CaseDetailViewModel(
@@ -36,7 +39,14 @@ class CaseDetailViewModel(
         viewModelScope.launch {
             val case = caseRepository.getCase(caseId)
             val exercises = exerciseRepository.getForCase(caseId)
-            _state.value = CaseDetailUiState(case = case, exercises = exercises, loading = false)
+            val dataset = case?.let { caseRepository.getDatasetWithValues(it.datasetId) }
+            _state.value = CaseDetailUiState(
+                case = case,
+                exercises = exercises,
+                loading = false,
+                evidenceLabel = dataset?.title ?: "",
+                evidenceValues = dataset?.values?.map { it.label.ifBlank { it.numericValue?.toString() ?: "" } } ?: emptyList()
+            )
         }
     }
 

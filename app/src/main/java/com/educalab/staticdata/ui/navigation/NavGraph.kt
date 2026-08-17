@@ -28,6 +28,8 @@ import com.educalab.staticdata.ui.screens.frequency.FrequencyScreen
 import com.educalab.staticdata.ui.screens.home.HomeScreen
 import com.educalab.staticdata.ui.screens.onboarding.OnboardingScreen
 import com.educalab.staticdata.ui.screens.profile.ProfileScreen
+import com.educalab.staticdata.ui.screens.profileselect.CreateProfileScreen
+import com.educalab.staticdata.ui.screens.profileselect.ProfileSelectScreen
 import com.educalab.staticdata.ui.screens.progress.ProgressScreen
 import com.educalab.staticdata.ui.screens.sampling.SamplingScreen
 import com.educalab.staticdata.ui.screens.stats.StatsScreen
@@ -41,9 +43,17 @@ fun StaticdataNavGraph() {
     var startDestination by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
-        val profile = container.profileRepository.getOrCreateProfile("Detective", 0)
-        CurrentUser.id = profile.id
-        startDestination = if (profile.onboardingCompleted) Routes.HOME else Routes.ONBOARDING
+        val profiles = container.profileRepository.getAllProfilesOnce()
+        val savedId = container.activeProfileId
+        val savedProfile = profiles.firstOrNull { it.id == savedId }
+        startDestination = when {
+            profiles.isEmpty() -> Routes.ONBOARDING
+            savedProfile != null -> {
+                CurrentUser.id = savedProfile.id
+                Routes.HOME
+            }
+            else -> Routes.PROFILE_SELECT
+        }
     }
 
     val destination = startDestination
@@ -62,9 +72,31 @@ fun StaticdataNavGraph() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = destination) {
         composable(Routes.ONBOARDING) {
-            OnboardingScreen(onFinished = {
+            OnboardingScreen(onFinished = { profileId ->
+                CurrentUser.id = profileId
+                container.activeProfileId = profileId
                 navController.navigate(Routes.HOME) { popUpTo(Routes.ONBOARDING) { inclusive = true } }
             })
+        }
+        composable(Routes.PROFILE_SELECT) {
+            ProfileSelectScreen(
+                onSelect = { profileId ->
+                    CurrentUser.id = profileId
+                    container.activeProfileId = profileId
+                    navController.navigate(Routes.HOME) { popUpTo(Routes.PROFILE_SELECT) { inclusive = true } }
+                },
+                onCreateNew = { navController.navigate(Routes.CREATE_PROFILE) }
+            )
+        }
+        composable(Routes.CREATE_PROFILE) {
+            CreateProfileScreen(
+                onBack = { navController.popBackStack() },
+                onCreated = { profileId ->
+                    CurrentUser.id = profileId
+                    container.activeProfileId = profileId
+                    navController.navigate(Routes.HOME) { popUpTo(Routes.PROFILE_SELECT) { inclusive = true } }
+                }
+            )
         }
         composable(Routes.HOME) {
             HomeScreen(onNavigate = { route -> navController.navigate(route) })
@@ -89,6 +121,14 @@ fun StaticdataNavGraph() {
             CaseDetailScreen(caseId = caseId, onBack = { navController.popBackStack() })
         }
         composable(Routes.PROGRESS) { ProgressScreen(onBack = { navController.popBackStack() }) }
-        composable(Routes.PROFILE) { ProfileScreen(onBack = { navController.popBackStack() }) }
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                onBack = { navController.popBackStack() },
+                onSwitchAccount = {
+                    container.activeProfileId = null
+                    navController.navigate(Routes.PROFILE_SELECT) { popUpTo(0) { inclusive = true } }
+                }
+            )
+        }
     }
 }

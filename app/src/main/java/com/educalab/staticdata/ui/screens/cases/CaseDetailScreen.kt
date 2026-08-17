@@ -3,7 +3,6 @@ package com.educalab.staticdata.ui.screens.cases
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,6 +23,8 @@ import com.educalab.staticdata.domain.model.Exercise
 import com.educalab.staticdata.domain.model.ExerciseType
 import com.educalab.staticdata.ui.components.AgencyTopBar
 import com.educalab.staticdata.ui.components.FeedbackPanel
+import com.educalab.staticdata.ui.components.RawDataEvidence
+import com.educalab.staticdata.ui.components.WrapRow
 import com.educalab.staticdata.ui.illustration.DatiMascot
 import com.educalab.staticdata.ui.illustration.MascotMood
 import com.educalab.staticdata.util.LocalAppContainer
@@ -73,6 +74,11 @@ fun CaseDetailScreen(caseId: Long, onBack: () -> Unit) {
             Spacer(Modifier.height(14.dp))
             Text(exercise.prompt, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(16.dp))
+
+            if (exercise.datasetId != null && state.evidenceValues.isNotEmpty()) {
+                RawDataEvidence(title = "Evidencia: ${state.evidenceLabel}", values = state.evidenceValues)
+                Spacer(Modifier.height(16.dp))
+            }
 
             val result = state.lastResult
             if (result == null) {
@@ -227,10 +233,10 @@ private fun ClassifyInteraction(exercise: Exercise, onSubmit: (List<String>) -> 
 
 @Composable
 private fun FlowChips(items: List<String>, onClick: (String) -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth().horizontalScroll(androidx.compose.foundation.rememberScrollState())) {
+    WrapRow(modifier = Modifier.fillMaxWidth()) {
         items.forEach { label ->
             Box(
-                modifier = Modifier.padding(4.dp).clip(RoundedCornerShape(10.dp))
+                modifier = Modifier.clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { onClick(label) }
                     .padding(horizontal = 12.dp, vertical = 10.dp)

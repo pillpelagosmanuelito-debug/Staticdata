@@ -22,6 +22,8 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +33,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.domain.model.CaseStatus
 import com.educalab.staticdata.ui.theme.ErrorRed
@@ -165,9 +170,136 @@ fun FeedbackPanel(correct: Boolean, explanation: String, onContinue: () -> Unit,
 @Composable
 fun SectionLabel(text: String, modifier: Modifier = Modifier) {
     Text(
-        text.uppercase(),
-        style = MaterialTheme.typography.labelMedium,
+        text,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = modifier.padding(bottom = 4.dp)
+        modifier = modifier.padding(bottom = 6.dp)
     )
+}
+
+/**
+ * Fila que envuelve sus hijos a la siguiente línea en vez de recortarlos u
+ * ocultarlos con scroll horizontal: así ningún chip queda cortado en el
+ * borde de la pantalla ni depende de que el niño descubra que puede deslizar.
+ */
+@Composable
+fun WrapRow(
+    modifier: Modifier = Modifier,
+    horizontalSpacing: Dp = 8.dp,
+    verticalSpacing: Dp = 8.dp,
+    content: @Composable () -> Unit
+) {
+    Layout(content = content, modifier = modifier) { measurables, constraints ->
+        val hGapPx = horizontalSpacing.roundToPx()
+        val vGapPx = verticalSpacing.roundToPx()
+        val maxWidth = constraints.maxWidth
+        val itemConstraints = Constraints(maxWidth = maxWidth)
+        val placeables = measurables.map { it.measure(itemConstraints) }
+
+        val rows = mutableListOf<MutableList<androidx.compose.ui.layout.Placeable>>()
+        var currentRow = mutableListOf<androidx.compose.ui.layout.Placeable>()
+        var currentRowWidth = 0
+        placeables.forEach { placeable ->
+            val newWidth = if (currentRow.isEmpty()) placeable.width else currentRowWidth + hGapPx + placeable.width
+            if (newWidth > maxWidth && currentRow.isNotEmpty()) {
+                rows += currentRow
+                currentRow = mutableListOf(placeable)
+                currentRowWidth = placeable.width
+            } else {
+                currentRow.add(placeable)
+                currentRowWidth = newWidth
+            }
+        }
+        if (currentRow.isNotEmpty()) rows += currentRow
+
+        val rowHeights = rows.map { row -> row.maxOf { it.height } }
+        val totalHeight = rowHeights.sum() + vGapPx * (rows.size - 1).coerceAtLeast(0)
+
+        layout(maxWidth, totalHeight) {
+            var y = 0
+            rows.forEachIndexed { i, row ->
+                var x = 0
+                row.forEach { placeable ->
+                    placeable.placeRelative(x, y)
+                    x += placeable.width + hGapPx
+                }
+                y += rowHeights[i] + vGapPx
+            }
+        }
+    }
+}
+
+/** Selector de "expediente/experimento" en pastillas que nunca se cortan en el borde. */
+@Composable
+fun TabChipsRow(
+    items: List<Pair<Long, String>>,
+    selectedId: Long?,
+    onSelect: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LabelChipsRow(
+        labels = items.map { it.second },
+        selectedLabel = items.firstOrNull { it.first == selectedId }?.second,
+        onSelect = { label -> items.firstOrNull { it.second == label }?.let { onSelect(it.first) } },
+        modifier = modifier
+    )
+}
+
+/** Igual que [TabChipsRow] pero cuando la propia etiqueta ya es una clave única (sin id numérico). */
+@Composable
+fun LabelChipsRow(
+    labels: List<String>,
+    selectedLabel: String?,
+    onSelect: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    WrapRow(modifier = modifier.fillMaxWidth()) {
+        labels.forEach { label ->
+            val active = label == selectedLabel
+            Card(
+                onClick = { onSelect(label) },
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Text(
+                    label,
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    color = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Muestra la lista cruda de datos (evidencia) numerada, para que el niño
+ * pueda contarlos y copiarlos directamente en vez de tener que adivinar.
+ */
+@Composable
+fun RawDataEvidence(title: String, values: List<String>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        SectionLabel(title)
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            WrapRow(modifier = Modifier.padding(12.dp), horizontalSpacing = 6.dp, verticalSpacing = 6.dp) {
+                values.forEachIndexed { index, value ->
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(horizontal = 8.dp, vertical = 6.dp)
+                    ) {
+                        Text("${index + 1}. $value", style = MaterialTheme.typography.labelMedium)
+                    }
+                }
+            }
+        }
+    }
 }

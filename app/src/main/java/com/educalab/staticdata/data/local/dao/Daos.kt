@@ -17,11 +17,17 @@ interface UserProfileDao {
     @Update
     suspend fun update(profile: UserProfileEntity)
 
-    @Query("SELECT * FROM user_profile LIMIT 1")
-    fun observeProfile(): Flow<UserProfileEntity?>
+    @Query("SELECT * FROM user_profile WHERE id = :id")
+    fun observeProfile(id: Long): Flow<UserProfileEntity?>
 
-    @Query("SELECT * FROM user_profile LIMIT 1")
-    suspend fun getProfileOnce(): UserProfileEntity?
+    @Query("SELECT * FROM user_profile WHERE id = :id")
+    suspend fun getProfile(id: Long): UserProfileEntity?
+
+    @Query("SELECT * FROM user_profile ORDER BY createdAtEpochMillis")
+    fun observeAllProfiles(): Flow<List<UserProfileEntity>>
+
+    @Query("SELECT * FROM user_profile ORDER BY createdAtEpochMillis")
+    suspend fun getAllProfilesOnce(): List<UserProfileEntity>
 
     @Query("SELECT COUNT(*) FROM user_profile")
     suspend fun countProfiles(): Int

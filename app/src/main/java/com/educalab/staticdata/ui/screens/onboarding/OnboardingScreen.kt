@@ -53,7 +53,7 @@ private val PAGES = listOf(
 )
 
 @Composable
-fun OnboardingScreen(onFinished: () -> Unit) {
+fun OnboardingScreen(onFinished: (profileId: Long) -> Unit) {
     val container = LocalAppContainer.current
     val viewModel = rememberAppViewModel { OnboardingViewModel(container.profileRepository) }
 

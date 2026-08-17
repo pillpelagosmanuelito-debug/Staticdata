@@ -18,15 +18,19 @@ class ProfileRepository(
     private val progressDao: ProgressDao,
     private val badgeDao: BadgeDao
 ) {
-    fun observeProfile(): Flow<UserProfile?> = profileDao.observeProfile().map { it?.toDomain() }
+    fun observeProfile(userId: Long): Flow<UserProfile?> = profileDao.observeProfile(userId).map { it?.toDomain() }
 
-    suspend fun getOrCreateProfile(defaultAlias: String, defaultAvatarId: Int): UserProfile {
-        profileDao.getProfileOnce()?.let { return it.toDomain() }
+    fun observeAllProfiles(): Flow<List<UserProfile>> = profileDao.observeAllProfiles().map { list -> list.map { it.toDomain() } }
+
+    suspend fun getAllProfilesOnce(): List<UserProfile> = profileDao.getAllProfilesOnce().map { it.toDomain() }
+
+    /** Crea un perfil nuevo e independiente (una "cuenta" más en el mismo dispositivo). */
+    suspend fun createProfile(alias: String, avatarId: Int): UserProfile {
         val entity = UserProfileEntity(
-            alias = defaultAlias,
-            avatarId = defaultAvatarId,
+            alias = alias,
+            avatarId = avatarId,
             createdAtEpochMillis = System.currentTimeMillis(),
-            onboardingCompleted = false
+            onboardingCompleted = true
         )
         val id = profileDao.insert(entity)
         progressDao.insert(ProgressEntity(userId = id))
@@ -34,22 +38,17 @@ class ProfileRepository(
     }
 
     suspend fun updateAlias(userId: Long, alias: String, avatarId: Int) {
-        val current = profileDao.getProfileOnce() ?: return
-        profileDao.update(current.copy(id = userId, alias = alias, avatarId = avatarId))
+        val current = profileDao.getProfile(userId) ?: return
+        profileDao.update(current.copy(alias = alias, avatarId = avatarId))
     }
 
-    suspend fun completeOnboarding(userId: Long) {
-        val current = profileDao.getProfileOnce() ?: return
-        profileDao.update(current.copy(onboardingCompleted = true))
-    }
-
-    suspend fun setSoundEnabled(enabled: Boolean) {
-        val current = profileDao.getProfileOnce() ?: return
+    suspend fun setSoundEnabled(userId: Long, enabled: Boolean) {
+        val current = profileDao.getProfile(userId) ?: return
         profileDao.update(current.copy(soundEnabled = enabled))
     }
 
-    suspend fun setHapticsEnabled(enabled: Boolean) {
-        val current = profileDao.getProfileOnce() ?: return
+    suspend fun setHapticsEnabled(userId: Long, enabled: Boolean) {
+        val current = profileDao.getProfile(userId) ?: return
         profileDao.update(current.copy(hapticsEnabled = enabled))
     }
 

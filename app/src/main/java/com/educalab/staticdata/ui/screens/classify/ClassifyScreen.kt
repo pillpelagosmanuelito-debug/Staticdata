@@ -2,12 +2,10 @@ package com.educalab.staticdata.ui.screens.classify
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -22,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.domain.model.DataValue
 import com.educalab.staticdata.ui.components.AgencyTopBar
+import com.educalab.staticdata.ui.components.WrapRow
 import com.educalab.staticdata.ui.illustration.DatiMascot
 import com.educalab.staticdata.ui.illustration.MascotMood
 import com.educalab.staticdata.util.LocalAppContainer
@@ -51,13 +50,12 @@ fun ClassifyScreen(onBack: () -> Unit) {
             Spacer(Modifier.height(12.dp))
 
             Text("Contenedores", style = MaterialTheme.typography.labelLarge)
-            Row(modifier = Modifier.horizontalScroll(rememberScrollState()).padding(vertical = 6.dp)) {
+            WrapRow(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
                 state.bins.forEach { bin ->
                     Card(
                         onClick = { selected?.let { viewModel.placeInBin(it, bin); selected = null } },
                         shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-                        modifier = Modifier.padding(end = 8.dp)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
                     ) {
                         Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(bin, fontWeight = FontWeight.Bold)

@@ -20,7 +20,7 @@ import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 
 @Composable
-fun ProfileScreen(onBack: () -> Unit) {
+fun ProfileScreen(onBack: () -> Unit, onSwitchAccount: () -> Unit) {
     val container = LocalAppContainer.current
     val viewModel = rememberAppViewModel { ProfileViewModel(container.profileRepository) }
     val profile by viewModel.profile.collectAsState()
@@ -72,6 +72,10 @@ fun ProfileScreen(onBack: () -> Unit) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
                 Text("Vibración (háptica)", modifier = Modifier.weight(1f))
                 Switch(checked = hapticsEnabled, onCheckedChange = { hapticsEnabled = it; viewModel.setHapticsEnabled(it) })
+            }
+            Spacer(Modifier.height(20.dp))
+            OutlinedButton(onClick = onSwitchAccount, modifier = Modifier.fillMaxWidth()) {
+                Text("Cambiar de cuenta")
             }
             Spacer(Modifier.height(12.dp))
             Text(

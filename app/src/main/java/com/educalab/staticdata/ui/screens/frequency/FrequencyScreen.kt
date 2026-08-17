@@ -1,25 +1,21 @@
 package com.educalab.staticdata.ui.screens.frequency
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.ui.components.AgencyTopBar
 import com.educalab.staticdata.ui.components.FrequencyBarChart
+import com.educalab.staticdata.ui.components.RawDataEvidence
 import com.educalab.staticdata.ui.components.SectionLabel
+import com.educalab.staticdata.ui.components.TabChipsRow
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 
@@ -35,26 +31,16 @@ fun FrequencyScreen(onBack: () -> Unit) {
         LazyColumn(contentPadding = PaddingValues(16.dp), modifier = Modifier.weight(1f)) {
             item {
                 SectionLabel("Elige un expediente de datos")
-                Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                    state.datasets.forEach { dataset ->
-                        val active = dataset.id == state.activeDataset?.id
-                        Card(
-                            onClick = { viewModel.selectDataset(dataset.id) },
-                            shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(containerColor = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant),
-                            modifier = Modifier.padding(end = 8.dp)
-                        ) {
-                            Text(
-                                dataset.title, modifier = Modifier.padding(10.dp),
-                                color = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
+                TabChipsRow(
+                    items = state.datasets.map { it.id to it.title },
+                    selectedId = state.activeDataset?.id,
+                    onSelect = { viewModel.selectDataset(it) }
+                )
+                Spacer(Modifier.height(16.dp))
+                RawDataEvidence(title = "Evidencia: los ${state.values.size} datos originales", values = state.values.map { it.label })
                 Spacer(Modifier.height(14.dp))
                 Text(
-                    "Hay ${state.values.size} datos en total. Escribe cuántas veces crees que aparece cada opción y comprueba tu tabla.",
+                    "Cuenta cuántas veces aparece cada opción en la evidencia de arriba y escribe el número:",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(10.dp))
@@ -86,7 +72,7 @@ fun FrequencyScreen(onBack: () -> Unit) {
                 }
                 Spacer(Modifier.height(16.dp))
                 state.revealed?.let { table ->
-                    SectionLabel("Tabla real (calculada por StatsEngine)")
+                    SectionLabel("Tabla real de frecuencias")
                     FrequencyBarChart(table = table)
                 }
             }

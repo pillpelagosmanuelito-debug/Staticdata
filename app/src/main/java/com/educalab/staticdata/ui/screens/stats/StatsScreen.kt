@@ -1,7 +1,6 @@
 package com.educalab.staticdata.ui.screens.stats
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,7 +12,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.ui.components.AgencyTopBar
 import com.educalab.staticdata.ui.components.FrequencyBarChart
+import com.educalab.staticdata.ui.components.LabelChipsRow
 import com.educalab.staticdata.ui.components.SectionLabel
+import com.educalab.staticdata.ui.components.TabChipsRow
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 import kotlin.math.abs
@@ -29,19 +30,11 @@ fun StatsScreen(onBack: () -> Unit) {
 
         Column(modifier = Modifier.padding(16.dp)) {
             SectionLabel("Elige un expediente")
-            Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                state.datasets.forEach { dataset ->
-                    val active = dataset.id == state.activeDataset?.id
-                    Card(
-                        onClick = { viewModel.selectDataset(dataset.id) },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant),
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Text(dataset.title, modifier = Modifier.padding(10.dp), color = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            }
+            TabChipsRow(
+                items = state.datasets.map { it.id to it.title },
+                selectedId = state.activeDataset?.id,
+                onSelect = { viewModel.selectDataset(it) }
+            )
 
             Spacer(Modifier.height(14.dp))
             state.table?.let { table ->
@@ -49,23 +42,21 @@ fun StatsScreen(onBack: () -> Unit) {
                 FrequencyBarChart(table = table)
                 Spacer(Modifier.height(8.dp))
                 Text(
+                    "La moda es el dato que más se repite.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
                     if (table.modes.size == 1) "La moda es: ${table.modes.first()}" else "Hay varias modas: ${table.modes.joinToString()}",
                     style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold
                 )
 
                 Spacer(Modifier.height(20.dp))
-                SectionLabel("Calculadora de porcentajes: ¡predice antes de mirar!")
-                Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                    table.rows.forEach { row ->
-                        val selected = row.label == state.selectedLabel
-                        Card(
-                            onClick = { viewModel.selectLabel(row.label) },
-                            shape = RoundedCornerShape(50),
-                            colors = CardDefaults.cardColors(containerColor = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surfaceVariant),
-                            modifier = Modifier.padding(end = 8.dp)
-                        ) { Text(row.label, modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp), color = if (selected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurfaceVariant) }
-                    }
-                }
+                SectionLabel("¿Qué parte del total es? ¡Adivina antes de mirar!")
+                LabelChipsRow(
+                    labels = table.rows.map { it.label },
+                    selectedLabel = state.selectedLabel,
+                    onSelect = { viewModel.selectLabel(it) }
+                )
 
                 Spacer(Modifier.height(12.dp))
                 Text("Tu predicción: ${state.predictedPercentage.toInt()}%", style = MaterialTheme.typography.bodyLarge)
@@ -74,7 +65,7 @@ fun StatsScreen(onBack: () -> Unit) {
                     onValueChange = { viewModel.updatePrediction(it) },
                     valueRange = 0f..100f
                 )
-                Button(onClick = { viewModel.reveal() }) { Text("Revelar porcentaje real") }
+                Button(onClick = { viewModel.reveal() }) { Text("Ver el porcentaje real") }
 
                 state.revealedPercentage?.let { real ->
                     Spacer(Modifier.height(10.dp))

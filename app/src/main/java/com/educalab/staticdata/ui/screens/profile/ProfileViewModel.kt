@@ -14,13 +14,13 @@ class ProfileViewModel(private val profileRepository: ProfileRepository) : ViewM
     val profile: StateFlow<UserProfile?> = _profile
 
     init {
-        viewModelScope.launch { profileRepository.observeProfile().collect { _profile.value = it } }
+        viewModelScope.launch { profileRepository.observeProfile(CurrentUser.id).collect { _profile.value = it } }
     }
 
     fun updateAlias(alias: String, avatarId: Int) {
         viewModelScope.launch { profileRepository.updateAlias(CurrentUser.id, alias, avatarId) }
     }
 
-    fun setSoundEnabled(enabled: Boolean) { viewModelScope.launch { profileRepository.setSoundEnabled(enabled) } }
-    fun setHapticsEnabled(enabled: Boolean) { viewModelScope.launch { profileRepository.setHapticsEnabled(enabled) } }
+    fun setSoundEnabled(enabled: Boolean) { viewModelScope.launch { profileRepository.setSoundEnabled(CurrentUser.id, enabled) } }
+    fun setHapticsEnabled(enabled: Boolean) { viewModelScope.launch { profileRepository.setHapticsEnabled(CurrentUser.id, enabled) } }
 }

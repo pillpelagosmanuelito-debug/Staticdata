@@ -34,7 +34,7 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             combine(
-                profileRepository.observeProfile(),
+                profileRepository.observeProfile(CurrentUser.id),
                 profileRepository.observeProgress(CurrentUser.id),
                 caseRepository.observeCases()
             ) { profile, progress, cases ->

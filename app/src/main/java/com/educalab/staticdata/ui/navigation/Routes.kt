@@ -2,6 +2,8 @@ package com.educalab.staticdata.ui.navigation
 
 object Routes {
     const val ONBOARDING = "onboarding"
+    const val PROFILE_SELECT = "profile_select"
+    const val CREATE_PROFILE = "create_profile"
     const val HOME = "home"
     const val PROFILE = "profile"
     const val ACADEMY = "academy"

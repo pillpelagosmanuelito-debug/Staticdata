@@ -6,8 +6,10 @@ val LocalAppContainer = compositionLocalOf<AppContainer> {
     error("AppContainer no proporcionado: envuelve el árbol de Composables con CompositionLocalProvider.")
 }
 
-/** Id del perfil local activo. Al ser una app de un único jugador por dispositivo,
- *  siempre existe como máximo un UserProfile; se cachea aquí tras crearlo. */
+/** Id del perfil actualmente abierto en este proceso. El dispositivo puede tener
+ *  varios perfiles (varias "cuentas" locales); este objeto solo recuerda cuál
+ *  está activo mientras la app está en memoria — la elección persistente vive en
+ *  [AppContainer.activeProfileId]. */
 object CurrentUser {
     @Volatile var id: Long = 0L
 }
