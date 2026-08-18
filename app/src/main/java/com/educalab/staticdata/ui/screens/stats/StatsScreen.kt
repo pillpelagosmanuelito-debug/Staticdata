@@ -13,8 +13,11 @@ import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.ui.components.AgencyTopBar
 import com.educalab.staticdata.ui.components.FrequencyBarChart
 import com.educalab.staticdata.ui.components.LabelChipsRow
+import com.educalab.staticdata.ui.components.ModuleHeroBanner
 import com.educalab.staticdata.ui.components.SectionLabel
 import com.educalab.staticdata.ui.components.TabChipsRow
+import com.educalab.staticdata.ui.illustration.ModuleIcon
+import com.educalab.staticdata.ui.theme.VioletMystery
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 import kotlin.math.abs
@@ -27,6 +30,13 @@ fun StatsScreen(onBack: () -> Unit) {
 
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).verticalScroll(rememberScrollState())) {
         AgencyTopBar(title = "Moda y porcentajes", onBack = onBack)
+        ModuleHeroBanner(
+            icon = ModuleIcon.PIE_PERCENT,
+            accent = VioletMystery,
+            message = "Descubre el dato más repetido y adivina porcentajes.",
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(Modifier.height(12.dp))
 
         Column(modifier = Modifier.padding(16.dp)) {
             SectionLabel("Elige un expediente")

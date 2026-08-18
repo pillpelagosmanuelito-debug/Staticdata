@@ -16,7 +16,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.ui.components.AgencyTopBar
 import com.educalab.staticdata.ui.components.FrequencyBarChart
+import com.educalab.staticdata.ui.components.ModuleHeroBanner
 import com.educalab.staticdata.ui.components.SectionLabel
+import com.educalab.staticdata.ui.illustration.ModuleIcon
+import com.educalab.staticdata.ui.theme.PinkPop
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 
@@ -34,6 +37,12 @@ fun SurveyScreen(onBack: () -> Unit) {
         AgencyTopBar(title = "Encuestas locales", onBack = onBack)
         LazyColumn(contentPadding = PaddingValues(16.dp), modifier = Modifier.weight(1f)) {
             item {
+                ModuleHeroBanner(
+                    icon = ModuleIcon.SURVEY_CLIPBOARD,
+                    accent = PinkPop,
+                    message = "Crea tu propia encuesta y descubre lo que opinan tus amigos."
+                )
+                Spacer(Modifier.height(16.dp))
                 SectionLabel("Crear una nueva encuesta")
                 OutlinedTextField(
                     value = question,

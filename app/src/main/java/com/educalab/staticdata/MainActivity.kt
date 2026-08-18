@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -22,7 +23,11 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(LocalAppContainer provides container) {
                 StaticdataTheme {
                     Surface(modifier = Modifier.fillMaxSize()) {
-                        StaticdataNavGraph()
+                        // El fondo del Surface sí llega borde a borde (pantalla completa
+                        // moderna), pero el contenido interactivo se reserva fuera de la
+                        // barra de estado, el notch y la barra de gestos para que nada
+                        // quede tapado en ningún dispositivo.
+                        StaticdataNavGraph(modifier = Modifier.fillMaxSize().safeDrawingPadding())
                     }
                 }
             }

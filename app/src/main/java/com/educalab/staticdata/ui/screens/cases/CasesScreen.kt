@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.domain.model.CaseFile
 import com.educalab.staticdata.domain.model.CaseStatus
 import com.educalab.staticdata.ui.components.AgencyTopBar
+import com.educalab.staticdata.ui.components.ModuleHeroBanner
 import com.educalab.staticdata.ui.components.StatusChip
 import com.educalab.staticdata.ui.illustration.ModuleIcon
 import com.educalab.staticdata.ui.illustration.ModuleIconArt
@@ -53,12 +54,13 @@ fun CasesScreen(onBack: () -> Unit, onOpenCase: (Long) -> Unit) {
 
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         AgencyTopBar(title = "Oficina de casos", onBack = onBack)
-        Text(
-            "Cada expediente es un caso real que se resuelve leyendo datos, no adivinando.",
-            style = MaterialTheme.typography.bodyMedium,
+        ModuleHeroBanner(
+            icon = ModuleIcon.FOLDER_MAGNIFIER,
+            accent = CoralAlert,
+            message = "Cada expediente es un caso real que se resuelve leyendo datos, no adivinando.",
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),

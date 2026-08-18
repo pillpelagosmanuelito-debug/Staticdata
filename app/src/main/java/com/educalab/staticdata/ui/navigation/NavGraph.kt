@@ -38,7 +38,7 @@ import com.educalab.staticdata.util.CurrentUser
 import com.educalab.staticdata.util.LocalAppContainer
 
 @Composable
-fun StaticdataNavGraph() {
+fun StaticdataNavGraph(modifier: Modifier = Modifier) {
     val container = LocalAppContainer.current
     var startDestination by remember { mutableStateOf<String?>(null) }
 
@@ -59,7 +59,7 @@ fun StaticdataNavGraph() {
     val destination = startDestination
     if (destination == null) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -70,7 +70,7 @@ fun StaticdataNavGraph() {
     }
 
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = destination) {
+    NavHost(navController = navController, startDestination = destination, modifier = modifier) {
         composable(Routes.ONBOARDING) {
             OnboardingScreen(onFinished = { profileId ->
                 CurrentUser.id = profileId

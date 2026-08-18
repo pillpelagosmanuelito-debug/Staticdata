@@ -12,8 +12,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.ui.components.AgencyTopBar
 import com.educalab.staticdata.ui.components.FeedbackPanel
+import com.educalab.staticdata.ui.components.ModuleHeroBanner
 import com.educalab.staticdata.ui.illustration.DatiMascot
 import com.educalab.staticdata.ui.illustration.MascotMood
+import com.educalab.staticdata.ui.illustration.ModuleIcon
+import com.educalab.staticdata.ui.theme.SkyBlue
 import com.educalab.staticdata.util.rememberAppViewModel
 
 @Composable
@@ -23,6 +26,13 @@ fun AcademyScreen(onBack: () -> Unit) {
 
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         AgencyTopBar(title = "Academia de datos", onBack = onBack)
+        ModuleHeroBanner(
+            icon = ModuleIcon.DATA_QUESTION,
+            accent = SkyBlue,
+            message = "Dati te ayuda a distinguir datos categóricos de numéricos.",
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(Modifier.height(12.dp))
 
         Column(modifier = Modifier.padding(20.dp).weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(

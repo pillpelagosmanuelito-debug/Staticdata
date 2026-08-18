@@ -39,6 +39,10 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.domain.model.CaseStatus
+import com.educalab.staticdata.ui.illustration.DatiMascot
+import com.educalab.staticdata.ui.illustration.MascotMood
+import com.educalab.staticdata.ui.illustration.ModuleIcon
+import com.educalab.staticdata.ui.illustration.ModuleIconArt
 import com.educalab.staticdata.ui.theme.ErrorRed
 import com.educalab.staticdata.ui.theme.SuccessGreen
 
@@ -272,6 +276,34 @@ fun LabelChipsRow(
                 )
             }
         }
+    }
+}
+
+/**
+ * Banner ilustrado que encabeza cada función: ícono grande a color + la
+ * mascota Dati. Da a cada pantalla una "cara" llamativa en vez de solo
+ * texto, reforzando que la app es para niños.
+ */
+@Composable
+fun ModuleHeroBanner(icon: ModuleIcon, accent: Color, message: String, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(accent.copy(alpha = 0.18f))
+            .padding(14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier.size(56.dp).clip(RoundedCornerShape(18.dp)).background(accent.copy(alpha = 0.35f)),
+            contentAlignment = Alignment.Center
+        ) {
+            ModuleIconArt(icon = icon, tint = accent, modifier = Modifier.size(30.dp))
+        }
+        Spacer(Modifier.width(12.dp))
+        Text(message, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Spacer(Modifier.width(8.dp))
+        DatiMascot(mood = MascotMood.HAPPY, modifier = Modifier.size(54.dp))
     }
 }
 

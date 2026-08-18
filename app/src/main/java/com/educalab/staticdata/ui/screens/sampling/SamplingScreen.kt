@@ -11,8 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.ui.components.AgencyTopBar
+import com.educalab.staticdata.ui.components.ModuleHeroBanner
 import com.educalab.staticdata.ui.components.SectionLabel
 import com.educalab.staticdata.ui.components.TabChipsRow
+import com.educalab.staticdata.ui.illustration.ModuleIcon
+import com.educalab.staticdata.ui.theme.TealClue
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 
@@ -27,6 +30,12 @@ fun SamplingScreen(onBack: () -> Unit) {
 
         LazyColumn(contentPadding = PaddingValues(16.dp), modifier = Modifier.weight(1f)) {
             item {
+                ModuleHeroBanner(
+                    icon = ModuleIcon.FLASK_SAMPLE,
+                    accent = TealClue,
+                    message = "Saca muestras pequeñas y compáralas con Dati."
+                )
+                Spacer(Modifier.height(16.dp))
                 SectionLabel("Elige qué vas a investigar")
                 TabChipsRow(
                     items = state.experiments.map { it.id to it.title },

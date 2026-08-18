@@ -13,9 +13,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.ui.components.AgencyTopBar
 import com.educalab.staticdata.ui.components.FrequencyBarChart
+import com.educalab.staticdata.ui.components.ModuleHeroBanner
 import com.educalab.staticdata.ui.components.RawDataEvidence
 import com.educalab.staticdata.ui.components.SectionLabel
 import com.educalab.staticdata.ui.components.TabChipsRow
+import com.educalab.staticdata.ui.illustration.ModuleIcon
+import com.educalab.staticdata.ui.theme.AmberStamp
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 
@@ -30,6 +33,12 @@ fun FrequencyScreen(onBack: () -> Unit) {
 
         LazyColumn(contentPadding = PaddingValues(16.dp), modifier = Modifier.weight(1f)) {
             item {
+                ModuleHeroBanner(
+                    icon = ModuleIcon.TABLE_GRID,
+                    accent = AmberStamp,
+                    message = "Cuenta los datos y arma tu propia tabla de frecuencias."
+                )
+                Spacer(Modifier.height(16.dp))
                 SectionLabel("Elige un expediente de datos")
                 TabChipsRow(
                     items = state.datasets.map { it.id to it.title },

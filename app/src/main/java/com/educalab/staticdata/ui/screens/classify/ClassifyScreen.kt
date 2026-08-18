@@ -20,9 +20,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.domain.model.DataValue
 import com.educalab.staticdata.ui.components.AgencyTopBar
+import com.educalab.staticdata.ui.components.ModuleHeroBanner
 import com.educalab.staticdata.ui.components.WrapRow
 import com.educalab.staticdata.ui.illustration.DatiMascot
 import com.educalab.staticdata.ui.illustration.MascotMood
+import com.educalab.staticdata.ui.illustration.ModuleIcon
+import com.educalab.staticdata.ui.theme.LimeZest
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 
@@ -35,6 +38,13 @@ fun ClassifyScreen(onBack: () -> Unit) {
 
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         AgencyTopBar(title = "Organizador y clasificación", onBack = onBack)
+        ModuleHeroBanner(
+            icon = ModuleIcon.SORT_FUNNEL,
+            accent = LimeZest,
+            message = "Toca cada dato y suéltalo en el contenedor correcto.",
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(Modifier.height(8.dp))
 
         if (state.activeDataset == null) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { DatiMascot(mood = MascotMood.THINKING) }

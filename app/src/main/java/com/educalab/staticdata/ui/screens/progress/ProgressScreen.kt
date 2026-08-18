@@ -15,9 +15,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.educalab.staticdata.domain.logic.ProgressRules
 import com.educalab.staticdata.ui.components.AgencyTopBar
+import com.educalab.staticdata.ui.components.ModuleHeroBanner
 import com.educalab.staticdata.ui.components.SectionLabel
 import com.educalab.staticdata.ui.components.XpProgressBar
 import com.educalab.staticdata.ui.illustration.BadgeArt
+import com.educalab.staticdata.ui.illustration.ModuleIcon
+import com.educalab.staticdata.ui.theme.SunYellow
 import com.educalab.staticdata.util.LocalAppContainer
 import com.educalab.staticdata.util.rememberAppViewModel
 
@@ -29,6 +32,13 @@ fun ProgressScreen(onBack: () -> Unit) {
 
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         AgencyTopBar(title = "Progreso y colección", onBack = onBack)
+        ModuleHeroBanner(
+            icon = ModuleIcon.TROPHY_PROGRESS,
+            accent = SunYellow,
+            message = "Aquí guardas tus insignias y todo lo que has logrado.",
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(Modifier.height(12.dp))
 
         Column(modifier = Modifier.padding(16.dp)) {
             XpProgressBar(
